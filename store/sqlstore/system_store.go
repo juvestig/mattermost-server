@@ -79,7 +79,7 @@ func (s SqlSystemStore) GetByName(name string) store.StoreChannel {
 	return store.Do(func(result *store.StoreResult) {
 		var system model.System
 		if err := s.GetReplica().SelectOne(&system, "SELECT * FROM Systems WHERE Name = :Name", map[string]interface{}{"Name": name}); err != nil {
-			result.Err = model.NewAppError("SqlSystemStore.GetByName", "store.sql_system.get_by_name.app_error", nil, "", http.StatusInternalServerError)
+			result.Err = model.NewAppError("SqlSystemStore.GetByName", "store.sql_system.get_by_name.app_error", nil, err.Error(), http.StatusInternalServerError)
 		}
 
 		result.Data = &system

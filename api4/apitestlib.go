@@ -68,8 +68,33 @@ func UseTestStore(settings *model.SqlSettings) {
 func StopTestStore() {
 }
 
+func testIt() {
+	if c := <-testStore.System().GetByName("test"); c.Err != nil {
+		mlog.Error(c.Err.Error())
+	} else if c2, ok := c.Data.(*model.System); ok {
+		mlog.Debug(fmt.Sprintf("found test: %+v", c2))
+	}
+
+	if c := <-testStore.System().SaveOrUpdate(&model.System{Name: "test", Value: "bob"}); c.Err != nil {
+		mlog.Error(c.Err.Error())
+	}
+
+	if c := <-testStore.System().GetByName("test"); c.Err != nil {
+		mlog.Error(c.Err.Error())
+	} else if c2, ok := c.Data.(*model.System); ok {
+		mlog.Debug(fmt.Sprintf("found test: %+v", c2))
+	}
+
+	// Save(system *model.System) StoreChannel
+	// SaveOrUpdate(system *model.System) StoreChannel
+	// Update(system *model.System) StoreChannel
+	// Get() StoreChannel
+	// GetByName(name string) StoreChannel
+}
+
 func setupTestHelper(enterprise bool, updateConfig func(*model.Config)) *TestHelper {
 	if testStore != nil {
+		testIt()
 		testStore.DropAllTables()
 	}
 
